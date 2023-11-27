@@ -1,8 +1,8 @@
-const host = process.env.HOST || '0.0.0.0';
-const port = process.env.PORT || 3000;
+import http from 'node:http'
+import httpProxy from 'npm:http-proxy@1.18.1'
 
-const http = require('https'),
-    httpProxy = require('http-proxy');
+const host = Deno.env.get("HOST") || '0.0.0.0';
+const port = Deno.env.get("PORT") || 3000;
 
 const proxy = httpProxy.createProxyServer({});
 
