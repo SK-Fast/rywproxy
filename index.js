@@ -2,7 +2,7 @@ const express = require('express')
 const axios = require("axios").default
 const cookieParser = require('cookie-parser')
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
 app.use(express.text({ type: "*/*" }))
 
@@ -52,5 +52,5 @@ app.all('*', async (req, res) => {
 })
 
 app.listen(port, () => {
-    console.log(`Example app listening on port ${port}`)
+    console.log(`RYWProxy listening at http://localhost:${port}`)
 })
