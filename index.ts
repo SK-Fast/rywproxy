@@ -26,16 +26,6 @@ app.all('*', async (req, res) => {
                 "Accept-Language": "en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7,zh-CN;q=0.6,zh;q=0.5",
                 "Cache-Control": "max-age=0",
                 "Connection": "keep-alive",
-                "Dnt": "1",
-                "Host": "rayongwit.ac.th",
-                "Sec-Ch-Ua": '"Google Chrome";v="119", "Chromium";v="119", "Not?A_Brand";v="24"',
-                "Sec-Ch-Ua-Mobile": '?0',
-                "Sec-Ch-Ua-Platform": '"Windows"',
-                "Sec-Fetch-Dest:": 'document',
-                "Sec-Fetch-Mode": 'navigate',
-                "Sec-Fetch-Site": 'none',
-                "Sec-Fetch-User": '?1',
-                "Upgrade-Insecure-Requests": '1',
                 "User-Agent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36',
             }
         })
