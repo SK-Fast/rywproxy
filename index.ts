@@ -37,6 +37,10 @@ app.all('*', async (req, res) => {
     } catch (err) {
         res.status(500)
         res.send(databack ?? "ERR")
+        console.log("FAILURE ---")
+        console.log(databack)
+        console.log(err)
+        console.log("---")
     }
 })
 
