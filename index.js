@@ -6,20 +6,13 @@ const port = process.env.PORT || 3000
 
 app.use(express.text({ type: "*/*" }))
 
-app.use((req, res, next) => {
+app.all('*', async (req, res) => {
     res.setHeader("Access-Control-Allow-Origin", req.headers.origin ?? "*");
     res.setHeader("Access-Control-Allow-Credentials", "true");
     res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
     res.setHeader("Access-Control-Allow-Headers", "*");
 
-    next();
-});
-
-app.all('*', async (req, res) => {
-    console.log(req.method)
-    console.log(req.headers)
-    console.log(req.body)
-    console.log(req.headers.cookie)
+    console.log("SERVING PROXY")
 
     let databack = ""
 
@@ -47,7 +40,8 @@ app.all('*', async (req, res) => {
     } catch (err) {
         res.status(502)
         res.send(databack ?? "ERR")
-        console.log("DATAA: ", databack)
+        console.log("FAILURE: ", databack)
+        console.log(err)
     }
 })
 
