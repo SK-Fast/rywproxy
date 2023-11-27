@@ -21,24 +21,33 @@ app.all('*', async (req, res) => {
     console.log(req.body)
     console.log(req.headers.cookie)
 
-    const originRes = await axios.request({
-        url: `https://rayongwit.ac.th${req.path}`,
-        method: req.method,
-        data: req.body,
-        headers: {
-            "Cookie": req.headers["cookie"] ?? "",
-            "Content-Type": req.headers["content-type"] ?? ""
+    let databack = ""
+
+    try {
+        const originRes = await axios.request({
+            url: `https://rayongwit.ac.th${req.path}`,
+            method: req.method,
+            data: req.body,
+            headers: {
+                "Cookie": req.headers["cookie"] ?? "",
+                "Content-Type": req.headers["content-type"] ?? ""
+            }
+        })
+        
+        databack = originRes.data
+    
+        const data = originRes.data
+        let rywlcommands = ""
+    
+        if (originRes.headers["set-cookie"]) {
+            res.setHeader("Set-Cookie", `${originRes.headers["set-cookie"]}; SameSite=None; Secure`)
         }
-    })
-
-    const data = originRes.data
-    let rywlcommands = ""
-
-    if (originRes.headers["set-cookie"]) {
-        res.setHeader("Set-Cookie", `${originRes.headers["set-cookie"]}; SameSite=None; Secure`)
+    
+        res.send(`${rywlcommands}${data}`)
+    } catch (err) {
+        res.status(500)
+        res.send(databack ?? "ERR")
     }
-
-    res.send(`${rywlcommands}${data}`)
 })
 
 app.listen(port, () => {
