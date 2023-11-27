@@ -35,7 +35,7 @@ app.all('*', async (req, res) => {
 
         res.send(`${rywlcommands}${data}`)
     } catch (err) {
-        res.status(502)
+        res.status(500)
         res.send(databack ?? "ERR")
     }
 })
