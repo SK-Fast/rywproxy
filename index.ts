@@ -1,5 +1,6 @@
 import express from "npm:express";
-import axiod from "https://deno.land/x/axiod/mod.ts";
+import config from "./config.ts";
+import axiod from "https://deno.land/x/axiod@0.26.2/mod.ts";
 const app = express();
 const port = Deno.env.get("PORT") || 3000;
 
@@ -14,14 +15,18 @@ app.use((req, res, next) => {
   next();
 });
 
-app.post("*", async (req: any, res: any) => {
+app.get("/", (req: any, res: any) => {
+  res.send("RYWProxy Running")
+})
+
+async function proceedRequest(req: any, res: any, fixedURL?: string) {
   const response: any = {};
 
-  let databack = "";
+  let databack = ""
 
   try {
     const originRes = await axiod.request({
-      url: `https://rayongwit.ac.th${req.path}`,
+      url: fixedURL ? fixedURL : `https://rayongwit.ac.th${req.path}`,
       method: req.body.method ?? "GET",
       data: req.body.data ?? undefined,
       headers: {
@@ -54,6 +59,27 @@ app.post("*", async (req: any, res: any) => {
     res.status(500);
     res.send(databack ?? "ERR");
   }
+}
+
+// Handle Watpol subdomains
+app.post("/watpol", async (req: any, res: any) => {
+  if (!req.query['server']) {
+    res.status(400);
+    res.send("Missing Server");
+    return
+  }
+
+  if (!config.watpolServers[req.query.server]) {
+    res.status(404);
+    res.send("Invalid Server Index");
+    return
+  }
+
+  proceedRequest(req, res, config.watpolServers[req.query.server])
+});
+
+app.post("*", async (req: any, res: any) => {
+  proceedRequest(req, res)
 });
 
 app.listen(port, () => {
