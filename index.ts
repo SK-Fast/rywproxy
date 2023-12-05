@@ -16,13 +16,13 @@ app.use((req, res, next) => {
 });
 
 app.get("/", (req: any, res: any) => {
-  res.send("RYWProxy Running")
-})
+  res.send("RYWProxy Running");
+});
 
 async function proceedRequest(req: any, res: any, fixedURL?: string) {
   const response: any = {};
 
-  let databack = ""
+  let databack = "";
 
   try {
     const originRes = await axiod.request({
@@ -32,15 +32,7 @@ async function proceedRequest(req: any, res: any, fixedURL?: string) {
       headers: {
         "Cookie": req.body.headers?.["Cookie"] ?? "my_lang=th",
         "Content-Type": req.body.headers?.["Content-Type"] ?? "",
-        "Accept":
-          "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-        "Accept-Encoding": "gzip, deflate, br",
-        "Accept-Language":
-          "en-US,en;q=0.9,th-TH;q=0.8,th;q=0.7,zh-CN;q=0.6,zh;q=0.5",
-        "Cache-Control": "max-age=0",
-        "Connection": "keep-alive",
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        ...config.defaultHeaders,
       },
     });
 
@@ -61,25 +53,48 @@ async function proceedRequest(req: any, res: any, fixedURL?: string) {
   }
 }
 
+// Handle Static assets
+app.get("/serve/*", async (req: any, res: any) => {
+  const destPath = req.path.replace("/serve", "");
+
+  try {
+    const originRes = await axiod.request({
+      url: `https://rayongwit.ac.th${destPath}`,
+      method: "GET",
+      headers: config.defaultHeaders,
+      responseType: "arraybuffer",
+    });
+
+    res.writeHead(200, [[
+      "Content-Type",
+      originRes.headers.get("Content-Type"),
+    ]]);
+    res.end(new Uint8Array(originRes.data));
+  } catch (err) {
+    res.status(500);
+    res.send(err);
+  }
+});
+
 // Handle Watpol subdomains
 app.post("/watpol", async (req: any, res: any) => {
-  if (!req.query['server']) {
+  if (!req.query["server"]) {
     res.status(400);
     res.send("Missing Server");
-    return
+    return;
   }
 
   if (!config.watpolServers[req.query.server]) {
     res.status(404);
     res.send("Invalid Server Index");
-    return
+    return;
   }
 
-  proceedRequest(req, res, config.watpolServers[req.query.server])
+  proceedRequest(req, res, config.watpolServers[req.query.server]);
 });
 
 app.post("*", async (req: any, res: any) => {
-  proceedRequest(req, res)
+  proceedRequest(req, res);
 });
 
 app.listen(port, () => {
