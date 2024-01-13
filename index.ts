@@ -57,7 +57,7 @@ async function proceedRequest(req: any, res: any, fixedURL?: string) {
 app.get("/serve/*", async (req: any, res: any) => {
   const destPath = req.path.replace("/serve", "");
 
-  if (req.path.includes("fixqr.php?id=")) {
+  if (req.path.includes("fixqr.php")) {
     res.redirect(`https://rayongwit.ac.th/${destPath}`);
     return
   }
