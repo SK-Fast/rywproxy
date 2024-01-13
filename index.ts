@@ -57,6 +57,11 @@ async function proceedRequest(req: any, res: any, fixedURL?: string) {
 app.get("/serve/*", async (req: any, res: any) => {
   const destPath = req.path.replace("/serve", "");
 
+  if (req.path.includes("fixqr.php?id=")) {
+    res.redirect(`https://rayongwit.ac.th/${destPath}`);
+    return
+  }
+
   try {
     const originRes = await axiod.request({
       url: `https://rayongwit.ac.th${destPath}`,
@@ -69,6 +74,7 @@ app.get("/serve/*", async (req: any, res: any) => {
       "Content-Type",
       originRes.headers.get("Content-Type"),
     ]]);
+    
     res.end(new Uint8Array(originRes.data));
   } catch (err) {
     res.status(500);
